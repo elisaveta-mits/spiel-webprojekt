@@ -1,0 +1,25 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 50px;
+}
+
+input, button {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  font-size: 16px;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+nav li {
+  margin: 10px 0;
+}
+
+button {
+  cursor: pointer;
+}
