@@ -23,3 +23,44 @@ nav li {
 button {
   cursor: pointer;
 }
+/* Popup Overlay */
+.popup {
+  display: none; /* versteckt */
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.popup-content {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.popup-content h2 {
+  margin: 0 0 20px 0;
+}
+
+.popup-content button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+#controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+#controls button {
+  padding: 20px;
+  font-size: 20px;
+  margin: 0 20px;
+  cursor: pointer;
+}
