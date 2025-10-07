@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crimson Puzzle</title>
+  <link rel="stylesheet" href="css/puzzle.css">
+</head>
+<body>
+  <div class="bg"></div>
+
+  <main class="container">
+    <h1>🧩 Crimson Puzzle</h1>
+
+    <div class="controls">
+      <label for="size">Schwierigkeit:</label>
+      <select id="size">
+        <option value="3">Leicht (3x3)</option>
+        <option value="4">Mittel (4x4)</option>
+        <option value="5">Schwer (5x5)</option>
+      </select>
+      <button id="startBtn">Starten</button>
+    </div>
+
+    <div id="puzzleContainer"></div>
+
+    <div id="stats">
+      <span id="moves">Züge: 0</span> | 
+      <span id="timer">Zeit: 0s</span>
+    </div>
+
+    <p id="message"></p>
+
+    <a href="home.html" class="back-link">← Zurück zum Menü</a>
+  </main>
+
+  <script src="js/puzzle.js"></script>
+</body>
+</html>

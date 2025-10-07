@@ -1,66 +1,70 @@
-/* 💜 Hintergrund mit Glitzerbewegung */
+
+/* 💫 Hintergrund */
 body, html {
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  height: 100%;
   font-family: "Poppins", sans-serif;
-  height: 100vh;
-  background: radial-gradient(circle at center, #2e004f, #0d001a);
   color: white;
+  overflow: hidden;
+  background: linear-gradient(-45deg, #2a005a, #100021, #3b0079, #1a0036);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
 }
 
-.background {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px);
-  background-size: 3px 3px;
-  animation: sparkle 10s linear infinite;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.3;
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-@keyframes sparkle {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(-200px, -200px); }
-}
-
-/* 💎 Hauptcontainer */
+/* 🪐 Spielbereich */
 .container {
   position: relative;
-  z-index: 1;
   text-align: center;
+  z-index: 1;
   padding: 30px 10px;
 }
 
-/* 🟪 Raster für Reaktionsfelder */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 120px);
-  grid-gap: 20px;
-  justify-content: center;
+#gameArea {
+  position: relative;
   margin: 40px auto;
-}
-
-.cell {
-  width: 120px;
-  height: 120px;
-  background-color: #4b0082;
+  width: 90vw;
+  max-width: 400px;
+  height: 60vh;
+  max-height: 500px;
   border-radius: 20px;
-  box-shadow: 0 0 15px rgba(150, 0, 255, 0.3);
-  transition: background-color 0.2s, transform 0.1s;
+  overflow: hidden;
+  border: 2px solid rgba(200, 150, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.cell.active {
-  background-color: #b966ff;
-  box-shadow: 0 0 25px #cc77ff;
-  transform: scale(1.05);
+/* ✨ Leuchtender Kreis */
+.planet {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #b966ff, #4b0082);
+  box-shadow: 0 0 25px #b966ff;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  animation: fadeIn 0.2s ease;
 }
 
+.planet:active {
+  transform: scale(0.9);
+  box-shadow: 0 0 15px #ffccff;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* 🌠 Text und Buttons */
 #infoText {
   font-size: 1.2em;
-  margin-top: 10px;
 }
 
 #result {
@@ -97,19 +101,15 @@ body, html {
   text-decoration: underline;
 }
 
-/* 📱 Responsive */
+/* 📱 Responsiv */
 @media (max-width: 600px) {
-  .grid {
-    grid-template-columns: repeat(2, 100px);
-    grid-gap: 15px;
+  #gameArea {
+    width: 95vw;
+    height: 65vh;
   }
 
-  .cell {
-    width: 100px;
-    height: 100px;
-  }
-
-  h1 {
-    font-size: 1.5em;
+  .planet {
+    width: 60px;
+    height: 60px;
   }
 }
