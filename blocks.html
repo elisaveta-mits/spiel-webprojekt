@@ -1,32 +1,23 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Block-Spiel</title>
+  <link rel="stylesheet" href="css/blocks.css">
+</head>
 <body>
-  <h1>Blocks Spiel</h1>
-  <canvas id="gameCanvas" width="400" height="400" style="border:1px solid #000;"></canvas>
-  <p>Verwende die Pfeiltasten ← → zum Steuern</p>
-  <button onclick="window.location.href='home.html'">⬅ Zurück zum Menü</button>
-<body>
-  <h1>Blocks Spiel</h1>
-  <canvas id="gameCanvas"></canvas>
-  <p>Verwende die Pfeiltasten ← → oder die Buttons unten</p>
-
-  <!-- Touch-Steuerung Buttons -->
-  <div id="controls">
-    <button id="leftBtn">⬅</button>
-    <button id="rightBtn">➡</button>
-  </div>
-
-  <button onclick="window.location.href='home.html'">⬅ Zurück zum Menü</button>
-
-  <script src="js/blocks.js"></script>
-</body>
-
-  <!-- Popup Overlay -->
-  <div id="gameOverPopup" class="popup">
-    <div class="popup-content">
-      <h2>Game Over!</h2>
-      <p id="finalScore"></p>
-      <button id="restartBtn">Neustart</button>
+  <div id="gameWrapper">
+    <h1>🟦 Block-Runner</h1>
+    <div id="gameArea">
+      <div id="player"></div>
     </div>
+
+    <h2 id="statusText">Weiche den fallenden Blöcken aus!</h2>
+    <button onclick="restartGame()">🔁 Neu starten</button>
+    <a href="home.html" class="back">⬅ Zurück zum Menü</a>
   </div>
 
   <script src="js/blocks.js"></script>
 </body>
+</html>

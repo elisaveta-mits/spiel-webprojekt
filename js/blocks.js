@@ -1,138 +1,116 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const gameArea = document.getElementById("gameArea");
+const statusText = document.getElementById("statusText");
+const player = document.getElementById("player");
 
-const player = {
-  x: 180,
-  y: 360,
-  width: 40,
-  height: 20,
-  speed: 8 // Spieler schneller bewegen
-};
-
-const blocks = [];
-const blockSize = 20;
+let playerX = 0;
+let enemies = [];
 let score = 0;
+let speed = 3;
 let gameOver = false;
+let enemyInterval = null;
 
-// Block erzeugen
-function createBlock() {
-  if (!gameOver) {
-    const x = Math.floor(Math.random() * (canvas.width - blockSize));
-    blocks.push({ x: x, y: 0 });
+// --- 🧭 Bewegung mit Pfeiltasten (Desktop)
+document.addEventListener("keydown", (e) => {
+  if (gameOver) return;
+  const step = 25;
+  if (e.key === "ArrowLeft" && playerX > 0) playerX -= step;
+  if (e.key === "ArrowRight" && playerX < gameArea.offsetWidth - player.offsetWidth)
+    playerX += step;
+  player.style.left = playerX + "px";
+});
+
+// --- 🧤 Touch-Steuerung für Mobilgeräte
+let touchStartX = null;
+let touchEndX = null;
+
+gameArea.addEventListener("touchstart", (e) => {
+  touchStartX = e.touches[0].clientX;
+});
+
+gameArea.addEventListener("touchmove", (e) => {
+  if (gameOver) return;
+  touchEndX = e.touches[0].clientX;
+  const diff = touchEndX - touchStartX;
+
+  // Wenn der Finger deutlich nach rechts oder links bewegt wurde
+  if (Math.abs(diff) > 30) {
+    const step = 30;
+    if (diff > 0 && playerX < gameArea.offsetWidth - player.offsetWidth) playerX += step;
+    if (diff < 0 && playerX > 0) playerX -= step;
+
+    player.style.left = playerX + "px";
+    touchStartX = touchEndX; // Reset, damit man flüssig weiterschieben kann
   }
+});
+
+// --- 🧱 Gegner erzeugen
+function createEnemy() {
+  if (gameOver) return;
+  const enemy = document.createElement("div");
+  enemy.classList.add("enemy");
+  enemy.style.left = Math.random() * (gameArea.offsetWidth - 40) + "px";
+  enemy.style.top = "0px";
+  gameArea.appendChild(enemy);
+  enemies.push(enemy);
 }
 
-// Spiel rendern
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+// --- ⚙️ Spiel-Schleife
+function gameLoop() {
+  if (gameOver) return;
 
-  // Spieler
-  ctx.fillStyle = "blue";
-  ctx.fillRect(player.x, player.y, player.width, player.height);
+  enemies.forEach((enemy, index) => {
+    let y = parseFloat(enemy.style.top);
+    y += speed;
+    enemy.style.top = y + "px";
 
-  // Blöcke
-  ctx.fillStyle = "red";
-  for (let i = blocks.length - 1; i >= 0; i--) {
-    const block = blocks[i];
-    block.y += 3; // Blöcke langsamer fallen
-
-    ctx.fillRect(block.x, block.y, blockSize, blockSize);
-
-    // Kollision prüfen
-    if (
-      block.y + blockSize > player.y &&
-      block.x < player.x + player.width &&
-      block.x + blockSize > player.x
-    ) {
+    if (isColliding(player, enemy)) {
       gameOver = true;
+      statusText.innerHTML = `💥 <b>Game Over!</b> Punkte: ${score}`;
+      clearInterval(enemyInterval);
     }
 
-    // Block weg, wenn unten
-    if (block.y > canvas.height) {
-      blocks.splice(i, 1);
+    if (y > gameArea.offsetHeight) {
+      enemy.remove();
+      enemies.splice(index, 1);
       score++;
+      statusText.textContent = `Punkte: ${score}`;
+      if (score % 10 === 0 && speed < 10) speed += 0.5;
     }
-  }
+  });
 
-  // Score anzeigen
-  ctx.fillStyle = "black";
-  ctx.font = "16px Arial";
-  ctx.fillText("Score: " + score, 10, 20);
-
-  if (!gameOver) {
-    requestAnimationFrame(draw);
-  } else {
-    ctx.fillStyle = "black";
-    ctx.font = "24px Arial";
-    ctx.fillText("Game Over! Endscore: " + score, 50, canvas.height / 2 - 20);
-    ctx.fillText("Drücke R zum Neustart", 50, canvas.height / 2 + 20);
-  }
+  requestAnimationFrame(gameLoop);
 }
 
-// Spieler bewegen
-document.addEventListener("keydown", e => {
-  if (!gameOver) {
-    if (e.key === "ArrowLeft" && player.x > 0) player.x -= player.speed;
-    if (e.key === "ArrowRight" && player.x + player.width < canvas.width) player.x += player.speed;
-  }
+function isColliding(a, b) {
+  const aRect = a.getBoundingClientRect();
+  const bRect = b.getBoundingClientRect();
+  return !(
+    aRect.top > bRect.bottom ||
+    aRect.bottom < bRect.top ||
+    aRect.left > bRect.right ||
+    aRect.right < bRect.left
+  );
+}
 
-  // Neustart nach Game Over
-  if (gameOver && e.key.toLowerCase() === "r") {
-    restartGame();
-  }
-});
-
-// Spiel neu starten
 function restartGame() {
-  blocks.length = 0;
+  enemies.forEach(e => e.remove());
+  enemies = [];
   score = 0;
+  speed = 3;
   gameOver = false;
-  draw();
+  if (enemyInterval) clearInterval(enemyInterval);
+  playerX = gameArea.offsetWidth / 2 - player.offsetWidth / 2;
+  player.style.left = playerX + "px";
+  statusText.textContent = "Weiche den fallenden Blöcken aus!";
+  startGame();
 }
 
-// Blöcke alle 1 Sekunde erzeugen
-setInterval(createBlock, 1000);
-
-// Spiel starten
-draw();
-function showGameOverPopup() {
-  const popup = document.getElementById("gameOverPopup");
-  const scoreText = document.getElementById("finalScore");
-  scoreText.textContent = "Dein Score: " + score;
-  popup.style.display = "flex";
+function startGame() {
+  if (enemyInterval) clearInterval(enemyInterval);
+  enemyInterval = setInterval(createEnemy, 1000);
+  requestAnimationFrame(gameLoop);
 }
 
-// Neustart-Button
-document.getElementById("restartBtn").addEventListener("click", () => {
-  const popup = document.getElementById("gameOverPopup");
-  popup.style.display = "none";
-  restartGame();
-});
-
-// In der Kollision statt alert():
-if (
-  block.y + blockSize > player.y &&
-  block.x < player.x + player.width &&
-  block.x + blockSize > player.x
-) {
-  gameOver = true;
-  showGameOverPopup(); // Zeigt Popup
-}const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-
-// Button Steuerung für Touch
-document.getElementById("leftBtn").addEventListener("touchstart", () => {
-  if (!gameOver && player.x > 0) player.x -= player.speed;
-});
-document.getElementById("rightBtn").addEventListener("touchstart", () => {
-  if (!gameOver && player.x + player.width < canvas.width) player.x += player.speed;
-});
-
-
-// Canvas an Fenstergröße anpassen
-function resizeCanvas() {
-  canvas.width = Math.min(window.innerWidth - 20, 400);
-  canvas.height = Math.min(window.innerHeight - 150, 400);
-}
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
+playerX = gameArea.offsetWidth / 2 - player.offsetWidth / 2;
+player.style.left = playerX + "px";
+startGame();

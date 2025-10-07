@@ -1,0 +1,115 @@
+/* 💜 Hintergrund mit Glitzerbewegung */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: "Poppins", sans-serif;
+  height: 100vh;
+  background: radial-gradient(circle at center, #2e004f, #0d001a);
+  color: white;
+}
+
+.background {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px);
+  background-size: 3px 3px;
+  animation: sparkle 10s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.3;
+}
+
+@keyframes sparkle {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-200px, -200px); }
+}
+
+/* 💎 Hauptcontainer */
+.container {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 30px 10px;
+}
+
+/* 🟪 Raster für Reaktionsfelder */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 120px);
+  grid-gap: 20px;
+  justify-content: center;
+  margin: 40px auto;
+}
+
+.cell {
+  width: 120px;
+  height: 120px;
+  background-color: #4b0082;
+  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(150, 0, 255, 0.3);
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.cell.active {
+  background-color: #b966ff;
+  box-shadow: 0 0 25px #cc77ff;
+  transform: scale(1.05);
+}
+
+#infoText {
+  font-size: 1.2em;
+  margin-top: 10px;
+}
+
+#result {
+  font-weight: bold;
+  margin-top: 20px;
+  font-size: 1.2em;
+}
+
+#startBtn {
+  background: linear-gradient(145deg, #a533ff, #5a00b6);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 30px;
+  cursor: pointer;
+  font-size: 1em;
+  box-shadow: 0 4px 10px rgba(100, 0, 255, 0.4);
+  transition: transform 0.2s, opacity 0.3s;
+}
+
+#startBtn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.back-link {
+  display: block;
+  margin-top: 15px;
+  color: #d0b0ff;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* 📱 Responsive */
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(2, 100px);
+    grid-gap: 15px;
+  }
+
+  .cell {
+    width: 100px;
+    height: 100px;
+  }
+
+  h1 {
+    font-size: 1.5em;
+  }
+}
