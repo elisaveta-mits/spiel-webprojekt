@@ -1,18 +1,56 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Homepage</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Startseite – Spielauswahl</title>
+  <link rel="stylesheet" href="css/home.css" />
 </head>
 <body>
-  <h1>Willkommen!</h1>
-  <nav>
-    <ul>
-      <li><a href="blocks.html">Spiel 1: Blocks</a></li>
-      <li><a href="reaction.html">Spiel 2: Reaktion</a></li>
-      <li><a href="puzzle.html">Spiel 3: Puzzle</a></li>
-    </ul>
-  </nav>
+  <div class="container">
+    <h1>🎮 Wähle ein Spiel</h1>
+
+    <div class="game-grid">
+      <div class="game-card" onclick="window.location.href='blocks.html'">
+        <h2>🟦 Blocks</h2>
+        <p>Teste deine Reaktionsgeschwindigkeit!</p>
+      </div>
+
+      <div class="game-card" onclick="window.location.href='reaction.html'">
+        <h2>⚡ Reaktion</h2>
+        <p>Wie schnell kannst du reagieren?</p>
+      </div>
+
+      <div class="game-card" onclick="window.location.href='puzzle.html'">
+        <h2>🧩 Puzzle</h2>
+        <p>Setze das Bild richtig zusammen!</p>
+      </div>
+    </div>
+
+    <div class="settings">
+      <button id="musicBtn">🎵 Musik aus</button>
+    </div>
+  </div>
+
+  <audio id="bgMusic" loop autoplay>
+    <source src="musik/background.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script>
+    const music = document.getElementById("bgMusic");
+    const btn = document.getElementById("musicBtn");
+    let playing = true;
+
+    btn.addEventListener("click", () => {
+      if (playing) {
+        music.pause();
+        btn.textContent = "🎵 Musik an";
+      } else {
+        music.play();
+        btn.textContent = "🎵 Musik aus";
+      }
+      playing = !playing;
+    });
+  </script>
 </body>
 </html>

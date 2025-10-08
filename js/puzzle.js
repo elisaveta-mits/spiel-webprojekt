@@ -1,121 +1,226 @@
-const images = ["img/level1.jpg", "img/level2.jpg", "img/level3.jpg"];
-let level = 1;
-let gridSize = 3;
-const board = document.getElementById("puzzleBoard");
+// js/puzzle.js — pointer-basierte, responsive Drag&Drop-Variante
+const puzzleBoard = document.getElementById("puzzleBoard");
 const piecesArea = document.getElementById("piecesArea");
 const message = document.getElementById("message");
 const levelText = document.getElementById("levelText");
 
-function loadLevel(lvl) {
+let currentLevel = 1;
+const totalLevels = 3;
+const imagePaths = ["img/level1.jpg","img/level2.jpg","img/level3.jpg"];
+
+// Hilfswerte
+function getBoardSize() {
+  // max 450px, sonst 90vw
+  return Math.min(window.innerWidth * 0.9, 450);
+}
+
+// Start
+loadLevel(currentLevel);
+
+// Lädt ein Level (3x3, 4x4, 5x5)
+function loadLevel(level) {
   message.textContent = "";
-  levelText.textContent = `Level ${lvl}`;
-  board.innerHTML = "";
+  levelText.textContent = `Level ${level}`;
+
+  puzzleBoard.innerHTML = "";
   piecesArea.innerHTML = "";
 
-  gridSize = lvl + 2; // 3x3, 4x4, 5x5
-  board.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
-  board.style.width = board.style.height = "min(80vw, 400px)";
+  const gridSizes = {1:3, 2:4, 3:5};
+  const gridSize = gridSizes[level] || 3;
+  const boardSize = getBoardSize();
+  const pieceSize = Math.floor(boardSize / gridSize);
 
-  const totalPieces = gridSize * gridSize;
-  const indices = Array.from({ length: totalPieces }, (_, i) => i);
-  const shuffled = [...indices].sort(() => Math.random() - 0.5);
+  // Board dimensionen setzen (responsiv)
+  puzzleBoard.style.width = `${boardSize}px`;
+  puzzleBoard.style.height = `${boardSize}px`;
+  puzzleBoard.style.gridTemplateColumns = `repeat(${gridSize}, ${pieceSize}px)`;
+  puzzleBoard.style.gridTemplateRows = `repeat(${gridSize}, ${pieceSize}px)`;
 
-  const imgSrc = images[lvl - 1];
-  const pieceSize = 400 / gridSize;
+  // Dropzonen erstellen (jede Zelle)
+  for (let i = 0; i < gridSize * gridSize; i++) {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    cell.dataset.index = i;
+    cell.style.width = `${pieceSize}px`;
+    cell.style.height = `${pieceSize}px`;
+    // DragOver/Drop sind nicht nötig für Pointer-API, aber so kann man auch native DnD benutzen
+    cell.addEventListener("dragover", e => e.preventDefault());
+    cell.addEventListener("drop", e => e.preventDefault());
+    puzzleBoard.appendChild(cell);
+  }
 
-  // Dropzonen erzeugen
-  indices.forEach((i) => {
-    const dropzone = document.createElement("div");
-    dropzone.classList.add("dropzone");
-    dropzone.dataset.index = i;
-    dropzone.style.width = `${pieceSize}px`;
-    dropzone.style.height = `${pieceSize}px`;
-    dropzone.addEventListener("dragover", (e) => e.preventDefault());
-    dropzone.addEventListener("drop", onDrop);
-    board.appendChild(dropzone);
-  });
+  // Teile erzeugen (in zufälliger Reihenfolge)
+  const total = gridSize * gridSize;
+  const correctIndices = Array.from({length: total}, (_, i)=>i);
+  // shuffled order for piecesArea
+  const shuffled = [...correctIndices].sort(()=>Math.random()-0.5);
 
-  // Puzzleteile zufällig anordnen
-  shuffled.forEach((i) => {
-    const row = Math.floor(i / gridSize);
-    const col = i % gridSize;
+  const img = imagePaths[level-1];
+
+  shuffled.forEach((correctIndex) => {
+    const row = Math.floor(correctIndex / gridSize);
+    const col = correctIndex % gridSize;
+
     const piece = document.createElement("div");
-    piece.classList.add("piece");
-    piece.draggable = true;
-    piece.dataset.index = i;
+    piece.className = "piece";
+    piece.draggable = false; // wir verwenden Pointer API
+    piece.dataset.correctIndex = correctIndex;
+
+    // Größe & Hintergrund (passt exakt zusammen)
     piece.style.width = `${pieceSize}px`;
     piece.style.height = `${pieceSize}px`;
-    piece.style.backgroundImage = `url(${imgSrc})`;
-    piece.style.backgroundSize = `${400}px ${400}px`;
-    piece.style.backgroundPosition = `-${col * pieceSize}px -${row * pieceSize}px`;
-    piece.addEventListener("dragstart", onDragStart);
-    piece.addEventListener("touchstart", onTouchStart);
+    piece.style.backgroundImage = `url(${img})`;
+    // backgroundSize in Prozent so, dass das gesamte Bild auf das Board passt
+    piece.style.backgroundSize = `${gridSize * 100}% ${gridSize * 100}%`;
+    // backgroundPosition so setzen, dass Teil genau zur Zelle passt
+    piece.style.backgroundPosition = `${(col/(gridSize-1))*100}% ${(row/(gridSize-1))*100}%`;
+
+    // pointer events für Touch+Mouse
+    piece.style.touchAction = "none";
+
+    // Pointer-Event-Handler (universell für Touch & Maus)
+    piece.addEventListener("pointerdown", pointerDown);
+
     piecesArea.appendChild(piece);
   });
 
-  // Shuffle die Reihenfolge (CSS zufällige Positionen)
-  const pieces = [...piecesArea.children];
-  pieces.forEach((piece) => {
-    piece.style.order = Math.floor(Math.random() * totalPieces);
-  });
+  // Stücke Area optisch anpassen (damit nicht in eine Spalte geraten)
+  // (CSS sollte flex-wrap haben; hier optional max-width setzen)
+  piecesArea.style.maxWidth = `${Math.min(320, boardSize*0.6)}px`;
 }
 
-let draggedPiece = null;
+// --- Pointer Drag & Drop (funktioniert auf Desktop & Mobile) ---
+let draggingEl = null;
+let offsetX = 0;
+let offsetY = 0;
+let originalParent = null;
+let originalNextSibling = null;
 
-function onDragStart(e) {
-  draggedPiece = e.target;
+function pointerDown(e) {
+  // Nur mit Hauptfinger / primary button
+  if (!e.isPrimary) return;
+  e.preventDefault();
+
+  draggingEl = e.currentTarget;
+  draggingEl.setPointerCapture(e.pointerId);
+
+  // Merken, von wo das Teil kommt
+  originalParent = draggingEl.parentElement;
+  originalNextSibling = draggingEl.nextElementSibling;
+
+  // berechne Offsets, damit Cursor an gleicher Stelle bleibt
+  const rect = draggingEl.getBoundingClientRect();
+  offsetX = e.clientX - rect.left;
+  offsetY = e.clientY - rect.top;
+
+  // style verändern, damit Element über allem schwebt
+  draggingEl.style.position = "fixed";
+  draggingEl.style.left = `${rect.left}px`;
+  draggingEl.style.top = `${rect.top}px`;
+  draggingEl.style.zIndex = 9999;
+  draggingEl.style.pointerEvents = "none"; // verhindert, dass elementFromPoint das Element selbst erkennt
+
+  // events
+  window.addEventListener("pointermove", pointerMove);
+  window.addEventListener("pointerup", pointerUp);
 }
 
-function onDrop(e) {
-  if (!draggedPiece) return;
-  const target = e.currentTarget;
-
-  // Wenn Dropzone leer → hinlegen
-  if (target.childElementCount === 0) {
-    target.appendChild(draggedPiece);
-  }
-  // Wenn man ein Teil zurückziehen möchte → zurück in den Teilebereich
-  else if (target.classList.contains("dropzone") && draggedPiece.parentElement !== piecesArea) {
-    piecesArea.appendChild(draggedPiece);
-  }
-
-  checkWin();
+function pointerMove(e) {
+  if (!draggingEl) return;
+  e.preventDefault();
+  const x = e.clientX - offsetX;
+  const y = e.clientY - offsetY;
+  draggingEl.style.left = `${x}px`;
+  draggingEl.style.top = `${y}px`;
 }
 
-// Touch-Unterstützung (Handy)
-function onTouchStart(e) {
-  const touch = e.touches[0];
-  draggedPiece = e.target;
+function pointerUp(e) {
+  if (!draggingEl) return;
+  draggingEl.releasePointerCapture?.(e.pointerId);
 
-  const move = (moveEvent) => {
-    const el = document.elementFromPoint(moveEvent.touches[0].clientX, moveEvent.touches[0].clientY);
-    if (el && el.classList.contains("dropzone") && el.childElementCount === 0) {
-      el.appendChild(draggedPiece);
-      document.removeEventListener("touchmove", move);
-      checkWin();
+  // ermitteln, wo losgelassen wurde
+  const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
+
+  // Wenn auf eine Zelle losgelassen wurde:
+  const cell = dropTarget && dropTarget.closest && dropTarget.closest(".cell");
+  if (cell) {
+    // Wenn Zelle leer → hineinlegen
+    if (!cell.firstElementChild) {
+      cell.appendChild(draggingEl);
+      resetDraggedStyle(draggingEl);
+    } else {
+      // Zelle belegt → swap: existierendes Element tauschen mit draggingEl
+      const existing = cell.firstElementChild;
+      // Hänge draggingEl in die Zelle
+      cell.appendChild(draggingEl);
+      // lege das existente wieder an den Ort, von dem draggingEl kam
+      if (originalParent && originalParent.classList.contains("cell")) {
+        // origin war eine Zelle → lege existing dorthin
+        originalParent.appendChild(existing);
+      } else {
+        // origin war piecesArea -> return existing zu piecesArea
+        piecesArea.appendChild(existing);
+      }
+      resetDraggedStyle(draggingEl);
     }
-  };
+    checkWin();
+  } else {
+    // Wenn auf piecesArea oder außerhalb: zurücklegen in piecesArea
+    const area = dropTarget && dropTarget.closest && dropTarget.closest("#piecesArea");
+    if (area) {
+      piecesArea.appendChild(draggingEl);
+      resetDraggedStyle(draggingEl);
+    } else {
+      // sonst: wenn origin Zelle war, bleibt es nicht verloren - lege zurück an Ursprung
+      if (originalParent && originalParent.classList.contains("cell") && !originalParent.firstElementChild) {
+        originalParent.appendChild(draggingEl);
+      } else {
+        piecesArea.appendChild(draggingEl);
+      }
+      resetDraggedStyle(draggingEl);
+    }
+  }
 
-  document.addEventListener("touchmove", move);
+  // Aufräumen
+  window.removeEventListener("pointermove", pointerMove);
+  window.removeEventListener("pointerup", pointerUp);
+  draggingEl = null;
+  originalParent = null;
+  originalNextSibling = null;
 }
 
+function resetDraggedStyle(el) {
+  el.style.position = "";
+  el.style.left = "";
+  el.style.top = "";
+  el.style.zIndex = "";
+  el.style.pointerEvents = "";
+}
+
+// --- Prüft, ob Puzzle komplett richtig ist ---
 function checkWin() {
-  const zones = [...document.querySelectorAll(".dropzone")];
-  const correct = zones.every((zone) => {
-    const piece = zone.firstElementChild;
-    return piece && piece.dataset.index === zone.dataset.index;
+  const cells = puzzleBoard.querySelectorAll(".cell");
+  let matched = 0;
+  cells.forEach(cell => {
+    const piece = cell.querySelector(".piece");
+    if (piece && piece.dataset.correctIndex == cell.dataset.index) matched++;
   });
-  if (correct) {
+  if (matched === cells.length) {
     message.textContent = "🎉 Geschafft!";
     setTimeout(() => {
-      if (level < images.length) {
-        level++;
-        loadLevel(level);
+      if (currentLevel < totalLevels) {
+        currentLevel++;
+        loadLevel(currentLevel);
       } else {
         message.textContent = "🏆 Alle Levels geschafft!";
       }
-    }, 1500);
+    }, 900);
   }
 }
 
-loadLevel(level);
+// Rebuild bei Fenstergröße ändern (damit alles responsiv bleibt)
+window.addEventListener("resize", () => {
+  // kleine Debounce
+  clearTimeout(window._puzzleResizeTime);
+  window._puzzleResizeTime = setTimeout(() => loadLevel(currentLevel), 250);
+});

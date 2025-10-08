@@ -1,20 +1,17 @@
-function login() {
+document.getElementById("loginForm").addEventListener("submit", function (e) {
+  e.preventDefault();
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  // Benutzerliste
-  const users = [
-    { username: "test", password: "98uz6t" },       // Dein neuer User
-    { username: "elisaveta", password: "1234" }    // Optional, bleibt falls du mehrere brauchst
-  ];
-
-  // Überprüfung
-  const user = users.find(u => u.username === username && u.password === password);
-
-  if (user) {
-    console.log("Login erfolgreich!");
-    window.location.href = "home.html"; // Weiterleitung zur Homepage
-  } else {
-    alert("Benutzername oder Passwort ist falsch. Bitte erneut versuchen.");
+  if (username === "" || password === "") {
+    document.getElementById("errorMsg").textContent = "Bitte alle Felder ausfüllen.";
+    return;
   }
-}
+
+  // 👉 Später hier echte Datenbankprüfung
+  if (username === "test" && password === "98uz6t") {
+    window.location.href = "home.html";
+  } else {
+    document.getElementById("errorMsg").textContent = "Falscher Benutzername oder Passwort.";
+  }
+});
