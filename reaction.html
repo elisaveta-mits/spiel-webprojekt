@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Galaxy Reaction</title>
   <link rel="stylesheet" href="css/reaction.css" />
+  <link rel="stylesheet" href="css/home.css">
 </head>
 <body>
   <div class="galaxy-bg"></div>
@@ -19,6 +20,53 @@
     <button id="startBtn">Spiel starten</button>
     <a href="home.html" class="back-link">← Zurück zum Menü</a>
   </main>
+
+
+<div id="siteHeader"></div>
+
+<script>
+  // header.html in die Seite laden
+  fetch("header.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("siteHeader").innerHTML = data;
+    });
+</script>
+
+<!--  Musik -->
+<audio id="bg-music" src="musik/spiel-hintergrund.mp3" loop></audio>
+<button id="music-toggle">🎵 Musik einschalten</button>
+
+<script>
+  const music = document.getElementById("bg-music");
+  const toggle = document.getElementById("music-toggle");
+  let musicEnabled = false;
+
+  const enableMusic = () => {
+    if (!musicEnabled) {
+      music.play().then(() => {
+        musicEnabled = true;
+        toggle.textContent = "🔊 Musik aus";
+      }).catch(() => {
+        console.log("Musik konnte nicht automatisch gestartet werden.");
+      });
+    }
+  };
+
+  toggle.addEventListener("click", () => {
+    if (music.paused) {
+      music.play();
+      toggle.textContent = "🔊 Musik aus";
+    } else {
+      music.pause();
+      toggle.textContent = "🎵 Musik an";
+    }
+  });
+
+  document.body.addEventListener("click", enableMusic, { once: true });
+  document.body.addEventListener("touchstart", enableMusic, { once: true });
+</script>
+
 
   <script src="js/reaction.js"></script>
 </body>

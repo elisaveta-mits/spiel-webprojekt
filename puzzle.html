@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Puzzle-Spiel</title>
   <link rel="stylesheet" href="css/puzzle.css">
+  <link rel="stylesheet" href="css/home.css">
 </head>
 <body>
+  <div id="siteHeader"></div>
+
   <div class="container">
     <h1>Puzzle-Spiel</h1>
     <p id="levelText">Level 1</p>
@@ -17,6 +20,40 @@
     <div id="message"></div>
     <a href="home.html" class="back-link">← Zurück zum Menü</a>
   </div>
+
+ <!--  Musik -->
+<audio id="bg-music" src="musik/spiel-hintergrund.mp3" loop></audio>
+<button id="music-toggle">🎵 Musik einschalten</button>
+
+<script>
+  const music = document.getElementById("bg-music");
+  const toggle = document.getElementById("music-toggle");
+  let musicEnabled = false;
+
+  const enableMusic = () => {
+    if (!musicEnabled) {
+      music.play().then(() => {
+        musicEnabled = true;
+        toggle.textContent = "🔊 Musik aus";
+      }).catch(() => {
+        console.log("Musik konnte nicht automatisch gestartet werden.");
+      });
+    }
+  };
+
+  toggle.addEventListener("click", () => {
+    if (music.paused) {
+      music.play();
+      toggle.textContent = "🔊 Musik aus";
+    } else {
+      music.pause();
+      toggle.textContent = "🎵 Musik an";
+    }
+  });
+
+  document.body.addEventListener("click", enableMusic, { once: true });
+  document.body.addEventListener("touchstart", enableMusic, { once: true });
+</script>
 
   <script src="js/puzzle.js"></script>
 </body>

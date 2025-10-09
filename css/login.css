@@ -1,8 +1,8 @@
 body {
   margin: 0;
   font-family: "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top left, #002d1f, #00140e);
-  color: white;
+  background: radial-gradient(circle at top left, #94749e, #a449c0);
+  color: rgb(255, 255, 255);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,14 +16,18 @@ body {
 }
 
 .login-card {
-  background: rgba(0, 50, 30, 0.8);
-  border: 1px solid #0f6;
+  background: rgba(98, 49, 189, 0.8);
+  border: 1px solid rgb(38, 25, 150);
   border-radius: 15px;
-  box-shadow: 0 0 25px rgba(0, 255, 100, 0.2);
+  box-shadow: 0 0 25px rgba(172, 127, 199, 0.2);
   padding: 30px;
   text-align: center;
   animation: fadeIn 1s ease-in-out;
 }
+
+::placeholder {
+  color: #000000; /* hellrosa oder weißlich – gut sichtbar */
+  opacity: 1; /* macht die Farbe vollständig sichtbar */
 
 .icon {
   font-size: 3rem;
@@ -31,7 +35,7 @@ body {
 }
 
 h1 {
-  color: #8f8;
+  color: rgb(226, 219, 235);
   margin-bottom: 20px;
 }
 
@@ -43,31 +47,31 @@ input {
   width: 90%;
   padding: 10px;
   border-radius: 10px;
-  border: 1px solid #0f6;
-  background: #002918;
-  color: white;
+  border: 1px solid rgb(209, 85, 133);
+  background: #c95179;
+  color: rgb(192, 83, 174);
   font-size: 1rem;
   outline: none;
   transition: box-shadow 0.3s;
 }
 
 input:focus {
-  box-shadow: 0 0 10px #0f6;
+  box-shadow: 0 0 10px rgb(255, 255, 255);
 }
 
 button {
-  background: linear-gradient(90deg, #0f6, #00c77f);
+  background: linear-gradient(90deg, rgb(206, 109, 177), rgb(180, 85, 121));
   border: none;
   padding: 10px 25px;
   border-radius: 10px;
   cursor: pointer;
   font-size: 1rem;
-  color: #00170c;
+  color: #eeeeee;
   transition: 0.3s;
 }
 
 button:hover {
-  background: linear-gradient(90deg, #00c77f, #0f6);
+  background: linear-gradient(90deg, #a84d85, rgb(173, 81, 132));
 }
 
 #errorMsg {

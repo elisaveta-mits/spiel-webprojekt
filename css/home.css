@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #013220, #024b2b);
+  background: linear-gradient(135deg, #2729aa, #6e1d61);
   color: #fff;
   display: flex;
   justify-content: center;
@@ -18,7 +18,7 @@ body {
 h1 {
   margin-bottom: 30px;
   font-size: 2rem;
-  text-shadow: 0 0 10px #0f0;
+  text-shadow: 0 0 10px rgb(204, 45, 151);
 }
 
 .game-grid {
@@ -28,22 +28,22 @@ h1 {
 }
 
 .game-card {
-  background: rgba(0, 40, 0, 0.8);
+  background: rgba(219, 62, 75, 0.8);
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+  box-shadow: 0 0 10px rgba(207, 48, 181, 0.336);
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .game-card:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+  box-shadow: 0 0 20px rgba(212, 45, 176, 0.5);
 }
 
 .game-card h2 {
   margin-bottom: 10px;
-  color: #8fff8f;
+  color: #1e2fc7;
 }
 
 .settings {
@@ -52,7 +52,7 @@ h1 {
 
 #musicBtn {
   padding: 10px 20px;
-  background: #046b3b;
+  background: #55032c;
   border: none;
   border-radius: 8px;
   color: #fff;
@@ -62,7 +62,7 @@ h1 {
 }
 
 #musicBtn:hover {
-  background: #05a150;
+  background: #610944;
 }
 
 @media (max-width: 600px) {
@@ -72,4 +72,21 @@ h1 {
   .game-card {
     padding: 15px;
   }
+}
+#music-toggle {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  background: #5b1385;
+  color: #dad6db;
+  border: 2px solid #702991;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  z-index: 1000;
+}
+
+#music-toggle:hover {
+  background: #5a1f66;
 }
