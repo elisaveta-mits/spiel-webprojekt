@@ -36,20 +36,22 @@ function loadLevel(level) {
   puzzleBoard.style.gridTemplateColumns = `repeat(${gridSize}, ${pieceSize}px)`;
   puzzleBoard.style.gridTemplateRows = `repeat(${gridSize}, ${pieceSize}px)`;
 
-  // Dropzonen erstellen (jede Zelle)
+  // Dropzonen erstellen (jede Zelle), richtige Position des Teils
   for (let i = 0; i < gridSize * gridSize; i++) {
     const cell = document.createElement("div");
     cell.className = "cell";
     cell.dataset.index = i;
     cell.style.width = `${pieceSize}px`;
     cell.style.height = `${pieceSize}px`;
+
+
     // DragOver/Drop sind nicht nötig für Pointer-API, aber so kann man auch native DnD benutzen
     cell.addEventListener("dragover", e => e.preventDefault());
     cell.addEventListener("drop", e => e.preventDefault());
     puzzleBoard.appendChild(cell);
   }
 
-  // Teile erzeugen (in zufälliger Reihenfolge)
+  // Teile erzeugen in zufälliger Reihenfolge
   const total = gridSize * gridSize;
   const correctIndices = Array.from({length: total}, (_, i)=>i);
   // shuffled order for piecesArea
@@ -224,3 +226,14 @@ window.addEventListener("resize", () => {
   clearTimeout(window._puzzleResizeTime);
   window._puzzleResizeTime = setTimeout(() => loadLevel(currentLevel), 250);
 });
+
+
+function saveScore(score) {
+  fetch('save_score.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `game_name=Puzzle&score=${score}`
+  })
+  .then(response => response.text())
+  .then(data => console.log(data));
+}

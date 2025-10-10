@@ -1,17 +1,19 @@
-document.getElementById("loginForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
+const music = document.getElementById("bgMusic");
+const musicToggle = document.getElementById("musicToggle");
+let isPlaying = true;
 
-  if (username === "" || password === "") {
-    document.getElementById("errorMsg").textContent = "Bitte alle Felder ausfüllen.";
-    return;
-  }
-
-  // 👉 Später hier echte Datenbankprüfung
-  if (username === "test" && password === "98uz6t") {
-    window.location.href = "home.html";
+musicToggle.addEventListener("click", () => {
+  if (isPlaying) {
+    music.pause();
+    musicToggle.textContent = "🔇";
   } else {
-    document.getElementById("errorMsg").textContent = "Falscher Benutzername oder Passwort.";
+    music.play();
+    musicToggle.textContent = "🔊";
   }
+  isPlaying = !isPlaying;
+});
+
+document.getElementById("startGame").addEventListener("click", () => {
+  alert("🎮 Spiel wird gestartet...");
+  // später -> window.location.href = "game.html";
 });

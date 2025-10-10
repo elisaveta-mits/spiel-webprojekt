@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top left, #94749e, #a449c0);
+  background: radial-gradient(circle at top left, #94749e, #4a3eb6);
   color: rgb(255, 255, 255);
   display: flex;
   justify-content: center;
@@ -17,7 +17,7 @@ body {
 
 .login-card {
   background: rgba(98, 49, 189, 0.8);
-  border: 1px solid rgb(38, 25, 150);
+  border: 1px solid rgb(69, 16, 131);
   border-radius: 15px;
   box-shadow: 0 0 25px rgba(172, 127, 199, 0.2);
   padding: 30px;
@@ -26,8 +26,8 @@ body {
 }
 
 ::placeholder {
-  color: #000000; /* hellrosa oder weißlich – gut sichtbar */
-  opacity: 1; /* macht die Farbe vollständig sichtbar */
+  color: #000000; 
+  
 
 .icon {
   font-size: 3rem;
@@ -35,7 +35,7 @@ body {
 }
 
 h1 {
-  color: rgb(226, 219, 235);
+  color: rgb(255, 255, 255);
   margin-bottom: 20px;
 }
 
@@ -49,24 +49,24 @@ input {
   border-radius: 10px;
   border: 1px solid rgb(209, 85, 133);
   background: #c95179;
-  color: rgb(192, 83, 174);
+  color: rgb(196, 92, 178);
   font-size: 1rem;
   outline: none;
   transition: box-shadow 0.3s;
 }
 
 input:focus {
-  box-shadow: 0 0 10px rgb(255, 255, 255);
+  box-shadow: 0 0 10px rgb(231, 136, 189);
 }
 
 button {
-  background: linear-gradient(90deg, rgb(206, 109, 177), rgb(180, 85, 121));
+  background: linear-gradient(90deg, rgb(189, 97, 161), rgb(180, 85, 121));
   border: none;
   padding: 10px 25px;
   border-radius: 10px;
   cursor: pointer;
   font-size: 1rem;
-  color: #eeeeee;
+  color: #da6793;
   transition: 0.3s;
 }
 

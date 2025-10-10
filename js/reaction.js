@@ -33,7 +33,7 @@ function nextRound() {
 
   rounds++;
   infoText.textContent = `Runde ${rounds}/${maxRounds}`;
-
+  //zufällig von 1 bis 3 sek.
   const delay = 1000 + Math.random() * 2000;
   setTimeout(() => {
     if (!gameRunning) return;
@@ -83,4 +83,15 @@ function endGame() {
   const avg = Math.round(score / maxRounds);
   result.textContent = `🏁 Fertig! Dein Reaktionsdurchschnitt: ${avg} Punkte`;
   infoText.textContent = "Drücke 'Spiel starten' für eine neue Runde.";
+}
+
+
+function saveScore(score) {
+  fetch('save_score.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `game_name=Reaction&score=${score}`
+  })
+  .then(response => response.text())
+  .then(data => console.log(data));
 }

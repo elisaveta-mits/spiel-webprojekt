@@ -2,24 +2,24 @@ const gameArea = document.getElementById("gameArea");
 const statusText = document.getElementById("statusText");
 const player = document.getElementById("player");
 
-let playerX = 0;
+let playerX = 0; // Position des Spielers horizontal
 let enemies = [];
 let score = 0;
 let speed = 3;
 let gameOver = false;
-let enemyInterval = null;
+let enemyInterval = null; // Timer für Gegner-Erzeugung
 
-// --- 🧭 Bewegung mit Pfeiltasten (Desktop)
+// Bewegung mit Pfeiltasten (Desktop)
 document.addEventListener("keydown", (e) => {
   if (gameOver) return;
-  const step = 25;
+  const step = 25;   // schrittweite in pixeln
   if (e.key === "ArrowLeft" && playerX > 0) playerX -= step;
   if (e.key === "ArrowRight" && playerX < gameArea.offsetWidth - player.offsetWidth)
     playerX += step;
   player.style.left = playerX + "px";
 });
 
-// --- 🧤 Touch-Steuerung für Mobilgeräte
+// Touch-Steuerung für Mobilgeräte
 let touchStartX = null;
 let touchEndX = null;
 
@@ -35,15 +35,16 @@ gameArea.addEventListener("touchmove", (e) => {
   // Wenn der Finger deutlich nach rechts oder links bewegt wurde
   if (Math.abs(diff) > 30) {
     const step = 30;
-    if (diff > 0 && playerX < gameArea.offsetWidth - player.offsetWidth) playerX += step;
-    if (diff < 0 && playerX > 0) playerX -= step;
+    if (diff > 0 && playerX < gameArea.offsetWidth - player.offsetWidth)
+     playerX += step;
+    if (diff < 0 && playerX > 0) playerX -= step; 
 
     player.style.left = playerX + "px";
     touchStartX = touchEndX; // Reset, damit man flüssig weiterschieben kann
   }
 });
 
-// --- 🧱 Gegner erzeugen
+//  Gegner erzeugen
 function createEnemy() {
   if (gameOver) return;
   const enemy = document.createElement("div");
@@ -54,7 +55,7 @@ function createEnemy() {
   enemies.push(enemy);
 }
 
-// --- ⚙️ Spiel-Schleife
+//  Spiel Ablauf
 function gameLoop() {
   if (gameOver) return;
 
@@ -114,3 +115,14 @@ function startGame() {
 playerX = gameArea.offsetWidth / 2 - player.offsetWidth / 2;
 player.style.left = playerX + "px";
 startGame();
+
+
+function saveScore(score) {
+  fetch('save_score.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `game_name=Blocks&score=${score}`
+  })
+  .then(response => response.text())
+  .then(data => console.log(data));
+}
